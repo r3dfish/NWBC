@@ -1,0 +1,33 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="./css/nwbcmobilesite.css"/>
+	<script src="./js/jquery-1.7.1.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		var selectedgallery = window.localStorage.getItem("chosengallery");
+		$.get("http://nationwidebarcrawl.com/mobilenative/photos/gallery/" + selectedgallery + '/', function(response) {
+			var parsed_data = $.parseJSON(response);
+			$('#mobile_gallery_title').append('<p>' + parsed_data['name'] + '</p>');
+			$.each(parsed_data['photos'], function() {
+				$('#mobile_single_gallery_ul').append('<li class="mobile_left"><a href="./photosphoto.html" onClick="photoClicked(\'' + this['pk'] + '\')" rel="external"><img src="http://nationwidebarcrawl.com' + this['mobilethumb'] + '" /></a></li>');
+			});
+		});
+	});
+	</script>
+</head>
+<body>
+<div id="mobile_header">
+        <img src="./images/mobile/mobile_header.png" />
+</div>
+<div id="mobile_header_title">PHOTO GALLERY</div>
+<div id="mobile_gallery_title"></div>
+<div>
+    <ul id="mobile_single_gallery_ul"></ul>
+</div>
+	<script>
+	function photoClicked(chosenphoto) {
+		window.localStorage.setItem("chosenphoto", chosenphoto); 
+		return true;
+	}
+	</script>
+</html>

@@ -1,0 +1,210 @@
+a {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.mobile_hr {
+	height: 2px;
+	width: 90%;
+	margin: 5px auto;
+	background-color: #DC0000;
+	clear: both;
+}
+
+.header_logo {
+	text-align: center;
+	margin-bottom: 15px;
+}
+
+.drinking_buddies_thumb {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+}
+
+.drinking_buddies_thumb li {
+	float: left;
+	margin: 0 4px;
+}
+
+#bar_detail_name {
+	color: #DC0000;
+	font-size: 24px;
+	margin: 0;
+	font-weight: bold;
+}
+
+#bar_detail_description {
+	margin: 0;
+}
+
+#bar_detail_address {
+	color: #DC0000;
+}
+
+#bar_beerlist_ul {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+}
+
+#bar_beerlist_ul li {
+	float: left;
+	margin-right: 5px;
+}
+
+#bar_bottlelist_ul {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+}
+
+#bar_bottlelist_ul li {
+	float: left;
+	margin-right: 5px;
+}
+
+#bar_members {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+}
+
+#bar_members li {
+	float: left;
+	margin-right: 5px;
+}
+
+#drinksphotos {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+}
+
+#drinksphotos li {
+	float: left;
+	margin-right: 5px;
+}
+
+#beerphotos {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+}
+
+#beerphotos li {
+	float: left;
+	margin-right: 5px;
+}
+
+#bar_photos {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+}
+
+#bar_photos li {
+	float: left;
+	margin-right: 5px;
+}
+
+#drink_image {
+	float: left;
+}
+
+#singleDrink_float_left {
+	float: left;
+}
+
+.drink_name {
+	color: #FFFFFF;
+	font-weight: bold;
+	margin: 0;
+}
+
+.drink_type {
+	color: #FFFFFF;
+	margin: 0;
+}
+
+.drink_glass_title {
+	color: #DC0000;
+	margin: 10px 0 0;
+	font-weight: bold;
+}
+
+.drink_glass {
+	color: #FFFFFF;
+	font-weight: bold;
+	margin: 0;
+}
+
+#beer_image {
+	float: left;
+	margin-right: 20px;
+}
+
+input {
+	color: #000000;
+}
+
+#profile_name {
+	color: #FFFFFF;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+#profile_info p a {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+#mobile_profile_beers_ul {
+	list-style: none outside none;
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+}
+
+#mobile_profile_beers_ul li {
+	float: left;
+}
+
+#mobile_profile_drinks_ul {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+	display: inline-block;
+}
+
+#mobile_profile_drinks_ul li {
+	width: 100px;
+	float: left;
+}
+
+#profile_content {
+	text-align: center;
+}
+
+.specials_bar_name {
+    color: #DC0000;
+    font-weight: bold;
+}
+
+.poll_name {
+	color: #DC0000;
+	text-align: center;
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.poll_vote_left {
+	float: left;
+	text-align: left;
+}
+
+.poll_vote_right {
+	float: right;
+	text-align: right;
+}

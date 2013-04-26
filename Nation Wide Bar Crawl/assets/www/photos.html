@@ -1,0 +1,47 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="./css/nwbcmobilesite.css"/>
+	<script src="./js/jquery-1.7.1.min.js"></script>
+	<script src="./js/jquery.mobile-1.1.1.min.js"></script>
+	<script>
+	// variable to hold if the user is logged in or not
+var isAuthenticated = localStorage.getItem("isAuthenticated");
+
+// check if the user is authenticated
+$(document).ready(function() {
+	// make sure the user is authenticated
+	if (isAuthenticated != "1") {
+		// redirect to login.html
+		window.location.href="login.html";
+	}
+});
+</script>
+	<script>
+	$(document).ready(function() {
+		$.get("http://nationwidebarcrawl.com/mobilenative/photos/", function(response) {
+			var parsed_data = $.parseJSON(response);
+			$.each(parsed_data, function() {
+				var chosengallery = this['gallerypk'];
+				$('#mobile_galleries_ul').append('<li class="mobile_left"><a href="./photosgallery.html" rel="external" onClick="galleryClicked(\'' + chosengallery + '\')"><img src="http://nationwidebarcrawl.com' + this['73x71'] + '" /></a><p>' + this['name'] + '</p></li>');
+			});
+		});
+	});
+	</script>
+</head>
+<body>
+<div id="mobile_header">
+	<img src="./images/mobile/mobile_header.png" />
+</div>
+<div id="mobile_header_title">GALLERIES</div>
+<div>
+	<p><a href="./photosuploadrandom.html" rel="external"><img src="./images/mobile/AddAPicture.png" /></a></p>
+	<ul id="mobile_galleries_ul"></ul>
+</div>
+	<script>
+	function galleryClicked(chosengallery) {
+		window.localStorage.setItem("chosengallery", chosengallery); 
+		return true;
+	}
+	</script>
+</body>
+</html>
