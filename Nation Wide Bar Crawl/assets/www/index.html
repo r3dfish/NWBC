@@ -155,6 +155,10 @@
 			<p>DRINKS</p>
 			<ul class="native_ul" id="profile_change_favorite_drinks_ul"></ul>
 		</div>
+		<div class="hidden transparentbg" id="profile_change_favorite_beers_page">
+			<p>BEERS</p>
+			<ul class="native_ul" id="profile_change_favorite_beers_ul"></ul>
+		</div>
 		<div class="hidden transparentbg" id="profile_edit_page">
 			<div id="profile_edit_info"></div>
 			<p><a href="#" onClick="profileChangeImageClicked()"><img src="./images/mobile/ChangeImage.png" /></a></p>
@@ -2768,7 +2772,7 @@
 				x=BEERPKS.split(/,/g).length;
 			}
 			for (x; x<5; x++) {
-				$('#mobile_profile_beers_ul').append('<li><a href="./profileaddbeer.html" rel="external"><img src="./images/mobile/BeerEmpty.png" /></a></li>');
+				$('#mobile_profile_beers_ul').append('<li><a href="#" onClick="profileChangeFavorite5BeersClicked()"><img src="./images/mobile/BeerEmpty.png" /></a></li>');
 			}
 		}
 		
@@ -2794,7 +2798,7 @@
 				y=DRINKPKS.split(/,/g).length;
 			}
 			for (y; y<3; y++) {
-				$('#mobile_profile_drinks_ul').append('<li><a href="#" onClick="profileChangeFavorite5DrinksClicked();"><img src="./images/mobile/DrinkEmpty.png" /></a></li>');
+				$('#mobile_profile_drinks_ul').append('<li><a href="#" onClick="profileChangeFavorite5DrinksClicked()"><img src="./images/mobile/DrinkEmpty.png" /></a></li>');
 			}
 		}
 	}
@@ -3321,6 +3325,49 @@
 	function profileChangeFavorite5DrinksAddClicked(chosendrink) {
 		// GET to add a drink to the users 5 favorite drinks
 		$.get("http://nationwidebarcrawl.com/mobilenative/profile/adddrink/" + chosendrink + "/", function(response) {
+			// reload the profile db table
+			window.localStorage.setItem("profiledbCreated", "0");
+			profileClicked();
+		});
+	}
+	
+	function profileChangeFavorite5BeersClicked() {
+		if ($('#profile_change_favorite_beers_page').is(':visible')) {
+			upArrowClicked();
+		} else {
+			$('.hidden:visible').slideUp('slow');
+			showSpinner();
+			// clear the beers ul
+			$('#profile_change_favorite_beers_ul').html('');
+			// query the db for beers list
+			db.transaction(queryProfileFavorite5BeersDB, errorCB);
+		}
+	}
+	
+	// get the beers list from the DB for profile 5 favorite beers page
+	function queryProfileFavorite5BeersDB(tx) {
+		tx.executeSql('SELECT * FROM beers', [], queryProfileFavorite5BeersSuccess, errorCB);
+	}
+	
+	// got beers list from DB for profile 5 favorite beers page
+	function queryProfileFavorite5BeersSuccess(tx, results) {
+		var len = results.rows.length;
+		for (var i=0; i<len; i++) {
+			var beer = results.rows.item(i);
+			$('#profile_change_favorite_beers_ul').append('<li><a href="#" onClick="profile5BeerAddClicked(\'' + beer.id + '\')">' + beer.name + '</a><span class="native_ul_arrow"></span></li>');
+		}
+		$('#profile_change_favorite_beers_page').slideDown('slow', function() {
+			setTimeout(function() {
+				myScroll.refresh();
+			}, 0);
+			hideSpinner();
+		});
+		$('#up_arrow').show();
+	}
+	
+	function profile5BeerAddClicked(chosenbeer) {
+		// GET to change the users favorite beer
+		$.get("http://nationwidebarcrawl.com/mobilenative/profile/addbeer/" + chosenbeer + "/", function(response) {
 			// reload the profile db table
 			window.localStorage.setItem("profiledbCreated", "0");
 			profileClicked();
