@@ -151,6 +151,10 @@
 			</div>
 			<div class="mobile_hr"></div>
 		</div>
+		<div class="hidden transparentbg" id="profile_change_favorite_drinks_page">
+			<p>DRINKS</p>
+			<ul class="native_ul" id="profile_change_favorite_drinks_ul"></ul>
+		</div>
 		<div class="hidden transparentbg" id="profile_edit_page">
 			<div id="profile_edit_info"></div>
 			<p><a href="#" onClick="profileChangeImageClicked()"><img src="./images/mobile/ChangeImage.png" /></a></p>
@@ -185,7 +189,6 @@
 			</div>
 			<img src="./images/mobile/profile_photos.png" />
 			<div id="profile_member1_galleries">
-				<p><a href="#" onClick="showTakePhotoPage()"><img src="./images/mobile/AddAPicture.png" /></a></p>
 				<ul id="profile_member1_galleries_ul"></ul>
 			</div>
 			<img src="./images/mobile/profile_score.png" />
@@ -2791,7 +2794,7 @@
 				y=DRINKPKS.split(/,/g).length;
 			}
 			for (y; y<3; y++) {
-				$('#mobile_profile_drinks_ul').append('<li><a href="./profileadddrink.html" rel="external"><img src="./images/mobile/DrinkEmpty.png" /></a></li>');
+				$('#mobile_profile_drinks_ul').append('<li><a href="#" onClick="profileChangeFavorite5DrinksClicked();"><img src="./images/mobile/DrinkEmpty.png" /></a></li>');
 			}
 		}
 	}
@@ -2859,7 +2862,7 @@
 	// add a drink to the template
 	function addFavoriteDrink(imagename, imageurl, id) {
 		// get drink files
-		DRINKSDATADIR.getFile(imagename, {create: false}, gotDrinkFile,function(){noDrinkFile(imageurl);});
+		DRINKSDATADIR.getFile(imagename, {create: false},function(fileEntry){gotDrinkFile(fileEntry, id);},function(){noDrinkFile(imageurl);});
 	}
 
 	// add a beer to the favorite beer list in the template
@@ -2869,7 +2872,7 @@
 
 	// add a drink to the favorite drink list in the template
 	function gotDrinkFile(fileEntry, id) {
-		$('#mobile_profile_drinks_ul').append('<li><img src="' + fileEntry.fullPath + '" /></li>');
+		$('#mobile_profile_drinks_ul').append('<li><a href="#" onClick="singleDrinkClicked(' + id + ')"><img src="' + fileEntry.fullPath + '" /></a></li>');
 	}
 
 	// get thumbnail for a beer
@@ -3280,6 +3283,50 @@
 		profileClicked();
 	}
 	
+	// show the profile change favorite drinks page
+	function profileChangeFavorite5DrinksClicked() {
+		if ($('#profile_change_favorite_drinks_page').is(':visible')) {
+			upArrowClicked();
+		} else {
+			$('.hidden:visible').slideUp('slow');
+			showSpinner();
+			// clear the beers ul
+			$('#profile_change_favorite_drinks_ul').html('');
+			// query the db for beers list
+			db.transaction(queryProfileFavorite5DrinksDB, errorCB);
+		}
+	}
+	
+	// Query the database for the drinks list for profile change favorite drinks
+	function queryProfileFavorite5DrinksDB(tx) {
+		tx.executeSql('SELECT * FROM drinks', [], queryProfileFavorite5DrinksSuccess, errorCB);
+	}
+	
+	// Drinks DB Query Success Callback for profile change favorite drinks
+	function queryProfileFavorite5DrinksSuccess(tx, results) {
+		var len = results.rows.length;
+		for (var i=0; i<len; i++){
+			var drink = results.rows.item(i);
+			$('#profile_change_favorite_drinks_ul').append('<li><a href="#" onClick="profileChangeFavorite5DrinksAddClicked(\'' + drink.id + '\')">' + drink.name + '</a><span class="native_ul_arrow"></span></li>');
+		}
+		$('#profile_change_favorite_drinks_page').slideDown('slow', function() {
+			setTimeout(function() {
+				myScroll.refresh();
+			}, 0);
+			hideSpinner();
+		});
+		$('#up_arrow').show();
+	}
+	
+	function profileChangeFavorite5DrinksAddClicked(chosendrink) {
+		// GET to add a drink to the users 5 favorite drinks
+		$.get("http://nationwidebarcrawl.com/mobilenative/profile/adddrink/" + chosendrink + "/", function(response) {
+			// reload the profile db table
+			window.localStorage.setItem("profiledbCreated", "0");
+			profileClicked();
+		});
+	}
+	
 	// display/hide the profile change image page
 	function profileChangeImageClicked() {
 		var auth_info = localStorage.getItem("isAuthenticated");
@@ -3384,7 +3431,7 @@
 	// 
 	//************************************************************
 	
-		// function to grab the drinks list and save them to the database
+	// function to grab the drinks list and save them to the database
 	function onDrinksMainReady() {
 		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onDrinksMainFSSuccess, errorHandler);
 		if (drinksdbCreated != 1) {
