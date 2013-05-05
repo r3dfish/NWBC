@@ -743,7 +743,6 @@
 			<img id="grid_button" class="mobile_right" src="./images/mobile/grid.png" />
 			<a href="#" onClick="showSlotMachine()"><img id="slot_button" class="mobile_left" src="./images/mobile/slot_machine.png" /></a>
 			<a href="#" onClick="upArrowClicked()"><img id="up_arrow" src="./images/mobile/uparrow.png" /></a>
-			<a href="#" onClick="upArrowFormClicked()"><img id="up_arrow_form" src="./images/mobile/uparrow.png" /></a>
 		</div>
 		<div id="home_buttons_conditional">
 			<div id="home_buttons_conditional_weeklypoll" class="hidden">
@@ -828,6 +827,9 @@
 		$(this).addClass('li_clicked');
 	});
 	
+	// variable to check if index needs to be reloaded on upArrowClicked()
+	var reloadindex = false;
+	
 	//************************************************************
 	//
 	// UP ARROW
@@ -836,17 +838,16 @@
 	
 	// hide all visible pages and hide the up arrow
 	function upArrowClicked() {
+		// if we need to reload the index to refresh the current state
+		if (reloadindex == true) {
+			window.location.href="index.html";
+		}
 		$('.hidden').slideUp('slow', function() {
 			setTimeout(function() {
 				myScroll.refresh();
 			}, 0);
 		});
 		$('#up_arrow').hide();
-	}
-	
-	// up arrow clicked from form page, reload index to reload iScroll library
-	function upArrowFormClicked() {
-		window.location.href="index.html";
 	}
 	
 	//************************************************************
@@ -4652,7 +4653,8 @@
 				setTimeout(function() {
 					myScroll.refresh();
 				}, 0);
-				$('#up_arrow_form').show();
+				reloadindex = true;
+				$('#up_arrow').show();
 			});
 		}
 	}
@@ -4694,7 +4696,8 @@
 				setTimeout(function() {
 					myScroll.refresh();
 				}, 0);
-				$('#up_arrow_form').show();
+				reloadindex = true;
+				$('#up_arrow').show();
 			});
 		}
 	}
@@ -4773,7 +4776,8 @@
 				setTimeout(function() {
 					myScroll.refresh();
 				}, 0);
-				$('#up_arrow_form').show();
+				reloadindex = true;
+				$('#up_arrow').show();
 			});
 		}
 	}
