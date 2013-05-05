@@ -140,12 +140,10 @@
 			</div>
 			<img src="./images/mobile/profile_beers.png" />
 			<div id="profile_beers">
-				<p>Top 5 Beers:</p>
 				<ul id="mobile_profile_beers_ul"></ul>
 			</div>
 			<img src="./images/mobile/profile_drinks.png" />
 			<div id="profile_drinks">
-				<p>Top 3 Drinks:</p>
 				<div id="add_favorite_drink_button"></div>
 				<ul id="mobile_profile_drinks_ul"></ul>
 			</div>
@@ -203,14 +201,12 @@
 			</div>
 			<img src="./images/mobile/profile_beers.png" />
 			<div id="profile_member1_beers">
-				<p>Top 5 Beers:</p>
-				<ul id="mobile_profile_beers_ul"></ul>
+				<ul id="profile_member1_beers_ul"></ul>
 			</div>
 			<img src="./images/mobile/profile_drinks.png" />
 			<div id="profile_drinks">
-				<p>Top 3 Drinks:</p>
 				<div id="add_favorite_drink_button"></div>
-				<ul id="mobile_profile_drinks_ul"></ul>
+				<ul id="profile_member1_drinks_ul"></ul>
 			</div>
 			<div class="mobile_hr"></div>
 		</div>
@@ -2710,8 +2706,8 @@
 				$('#profile_member1_beer_score').html('');
 				$('#profile_member1_drink_score').html('');
 				$('#profile_member1_total_score').html('');
-				$('#profile_member1_mobile_profile_beers_ul').html('');
-				$('#profile_member1_mobile_profile_drinks_ul').html('');
+				$('#profile_member1_beers_ul').html('');
+				$('#profile_member1_drinks_ul').html('');
 				// fill in values
 				var parsed_data = $.parseJSON(response);
 				$('#profile_member1_name').append(parsed_data['username']);
@@ -2734,7 +2730,7 @@
 				$('#profile_member1_beer_score').append(parsed_data['beerscore']);
 				$('#profile_member1_drink_score').append(parsed_data['drinkscore']);
 				$('#profile_member1_total_score').append(parsed_data['memberscore']);
-				fillInProfile(parsed_data['favbeers'], parsed_data['favdrinks']);
+				fillInMember1Profile(parsed_data['favbeers'], parsed_data['favdrinks']);
 				$('.hidden:visible').slideUp('slow');
 				$('#profile_member1_page').slideDown('slow', function() {
 					setTimeout(function() {
@@ -2907,6 +2903,154 @@
 				$('#profile_galleries_ul').append('<li class="mobile_left"><a href="#" rel="external" onClick="galleryClicked(\'' + chosengallery + '\')"><img src="http://nationwidebarcrawl.com' + this['73x71'] + '" /></a><p>' + this['name'] + '</p></li>');
 			});
 		});
+	}
+	
+	// Query the success callback
+	function fillInMember1Profile(favbeerpks, favdrinkpks) {
+		// get users top 5 beers
+		var beertagsstring = '(' + favbeerpks;
+		// remove last comma from string
+		beertagsstring = beertagsstring.slice(0,beertagsstring.length-1);
+		// add final right parenthesis to string
+		beertagsstring += ')';
+		BEERPKS = beertagsstring;
+	
+		// if there are beers, add them to the template
+		if(BEERPKS != ")") {
+			// get filesystem access for beer images
+			window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onBeerMember1FSSuccess, errorHandler);
+		}
+	
+		// fill in empty beers if beers count is less than 5
+		if (BEERPKS.split(/,/g).length - 1 < 5) {
+			var x = 0;
+			if (BEERPKS == ")"){
+				x=0;
+			} else {
+				x=BEERPKS.split(/,/g).length;
+			}
+			for (x; x<5; x++) {
+				$('#profile_member1_beers_ul').append('<li><img src="./images/mobile/BeerEmpty.png" /></li>');
+			}
+		}
+		
+		// get users top 3 drinks
+		var drinktagsstring = '(' + favdrinkpks;
+		// remove last comma from string
+		drinktagsstring = drinktagsstring.slice(0,drinktagsstring.length-1);
+		// add final right parenthesis to string
+		drinktagsstring += ')';
+		DRINKPKS = drinktagsstring;
+	
+		// if favorite drinks, add them to template
+		if(DRINKPKS != ")") {
+			// get filesystem access for beer images
+			window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onDrinkMember1FSSuccess, errorHandler);
+		}
+		// fill in empty drinks if drinks count is less than 3
+		if (DRINKPKS.split(/,/g).length - 1 < 3) {
+			var y = 0;
+			if (DRINKPKS == ")"){
+				y=0;
+			} else {
+				y=DRINKPKS.split(/,/g).length;
+			}
+			for (y; y<3; y++) {
+				$('#profile_member1_drinks_ul').append('<li><img src="./images/mobile/DrinkEmpty.png" /></li>');
+			}
+		}
+	}
+	
+	// got filesystem access for beer images
+	function onBeerMember1FSSuccess(fileSystem) {
+		fileSystem.root.getDirectory("NWBC",{create:true},function(){},function(){});
+		fileSystem.root.getDirectory("NWBC/beers",{create:true},gotBeersMember1Dir,onError);
+	}
+	
+	// got filesystem access for drink images
+	function onDrinkMember1FSSuccess(fileSystem) {
+		fileSystem.root.getDirectory("NWBC",{create:true},function(){},function(){});
+		fileSystem.root.getDirectory("NWBC/drinks",{create:true},gotDrinksMember1Dir,onError);
+	}
+	
+	// got filesystem directory for drink images
+	function gotDrinksMember1Dir(d){
+		DRINKSDATADIR = d;
+		// query the database to get drink image names
+		db.transaction(queryDrinksMember1DB, errorCB, function(){});
+	}
+	
+	// Query the drinks database
+	function queryDrinksMember1DB(tx) {
+		tx.executeSql('SELECT * FROM drinks WHERE id IN ' + DRINKPKS, [], queryDrinksMember1Success, errorCB);
+	}
+	
+	// drinks database query success callback
+	function queryDrinksMember1Success(tx, results) {
+		var len = results.rows.length;
+		for (var i=0; i<len; i++){
+			var drink = results.rows.item(i);
+			addFavoriteMember1Drink(drink.imagename, drink.imageurl, drink.id);
+		}
+	}
+	
+	// add a drink to the template for the member1 profile
+	function addFavoriteMember1Drink(imagename, imageurl, id) {
+		// get drink files
+		DRINKSDATADIR.getFile(imagename, {create: false},function(fileEntry){gotMember1DrinkFile(fileEntry, id);},function(){noMember1DrinkFile(imageurl);});
+	}
+	
+	// get thumbnail for a drink
+	function noMember1DrinkFile(imageurl) {
+		// create fileTransfer object
+		var ft = new FileTransfer();
+		var dlPath = DRINKSDATADIR.fullPath + "/" + imageurl.substring(imageurl.lastIndexOf('/')+1);
+		ft.download("http://nationwidebarcrawl.com" + imageurl, dlPath, function(fileEntry) {$('#profile_member1_drinks_ul').append('<li><img src="' + fileEntry.fullPath + '" /></li>');}, null);
+	}
+	
+	// add a drink to the favorite drink list in the template
+	function gotMember1DrinkFile(fileEntry, id) {
+		$('#profile_member1_drinks_ul').append('<li><a href="#" onClick="singleDrinkClicked(' + id + ')"><img src="' + fileEntry.fullPath + '" /></a></li>');
+	}
+	
+	// got filesystem directory for beer images
+	function gotBeersMember1Dir(d){
+		BEERSDATADIR = d;
+		// query the database to get beer image names
+		db.transaction(queryBeersMember1DB, errorCB, function(){});
+	}
+	
+	// Query the beers database
+	function queryBeersMember1DB(tx) {
+		tx.executeSql('SELECT * FROM beers WHERE id IN ' + BEERPKS, [], queryBeersMember1Success, errorCB);
+	}
+	
+	// beers database query success callback
+	function queryBeersMember1Success(tx, results) {
+		var len = results.rows.length;
+		for (var i=0; i<len; i++){
+			var beer = results.rows.item(i);
+			addFavoriteMember1Beer(beer.imagename, beer.imageurl, beer.id);
+		}
+	}
+	
+	// add a beer to the template for the Member1 profile page
+	function addFavoriteMember1Beer(imagename, imageurl, id) {
+		// get beer files
+		BEERSDATADIR.getFile(imagename, {create: false}, gotBeerMember1File,function(){noBeerMember1File(imageurl);});
+	}
+	
+	// add a beer to the favorite beer list in the template
+	function gotBeerMember1File(fileEntry, id) {
+		$('#profile_member1_beers_ul').append('<li><img src="' + fileEntry.fullPath + '" /></li>');
+	}
+		
+	// get thumbnail for a beer
+	function noBeerMember1File(imageurl) {
+		// create fileTransfer object
+		var ft = new FileTransfer();
+		var dlPath = BEERSDATADIR.fullPath + "/" + imageurl.substring(imageurl.lastIndexOf('/')+1);
+		ft.download("http://nationwidebarcrawl.com" + imageurl, dlPath, function(fileEntry) {$('#profile_member1_beers_ul').append('<li><img src="' + fileEntry.fullPath + '" /></li>');}, null);
 	}
 	
 	// display/hide the edit profile page

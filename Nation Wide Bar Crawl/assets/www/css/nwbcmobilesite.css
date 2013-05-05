@@ -252,6 +252,26 @@ a {
 	float: left;
 }
 
+#profile_member1_beers_ul {
+	list-style: none outside none;
+}
+
+#profile_member1_beers_ul li {
+	float: left;
+}
+
+#profile_member1_drinks_ul {
+	margin: 0;
+	padding: 0;
+	list-style: none outside none;
+	float: left;
+}
+
+#profile_member1_drinks_ul li {
+	width: 100px;
+	float: left;
+}
+
 #photo_tagged_bar a {
 	color: #FFFFFF;
 	text-decoration: none;
