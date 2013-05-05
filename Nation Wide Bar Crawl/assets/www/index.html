@@ -903,9 +903,7 @@
 	$('#slot_spin_holder').click(function() {
 		var destslug = localStorage.getItem("slotdestslug");
 		if (destslug == null) {
-			//alert('Please pick a destination before you spin');
-			navigator.notification.alert('Please pick a destination before you spin', null, '', 'Select Destination');
-			window.location.href="slotstates.html";
+			showSlotStates();
 		} else {
 			showSpinner();
 			$.get("http://nationwidebarcrawl.com/mobilenative/spin/" + destslug + "/", function(response) {
@@ -1103,10 +1101,10 @@
 				if (barsDbs.search(selectedstate)!=-1) {
 					db.transaction(querySlotStateDB, errorCB, function(){});
 				} else {
-					db.transaction(populateSlotStateDB, errorCB, querySlotStateSuccess);
+					db.transaction(populateSlotStateDB, errorCB, successSlotStateCB);
 				}
 			} else {
-				db.transaction(populateSlotStateDB, errorCB, querySlotStateSuccess);
+				db.transaction(populateSlotStateDB, errorCB, successSlotStateCB);
 			}
 		}
 	}
@@ -1141,6 +1139,11 @@
 			barVarString = [bar['pk'], bar['name'], bar['slug'], bar['location'], bar['address'], bar['destination'], bar['destination_slug'], bar['phone'], bar['city'], bar['state'], bar['statekey'], bar['website']];
 			tx.executeSql('INSERT INTO bars (id, name, slug, location, address, destination, destination_slug, phone, city, state, statekey, website) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', barVarString);
 		}
+	}
+	
+	// Slot State DB Success Callback, executes after bars db is created for the first time from the slot machine
+	function successSlotStateCB() {
+		db.transaction(querySlotStateDB, errorCB);
 	}
 	
 	// Query the database for destination information for slot_state_page
