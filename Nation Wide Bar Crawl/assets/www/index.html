@@ -127,24 +127,24 @@
 			<div id="profile_info_holder">
 				<div id="profile_info"></div>
 			</div>
-			<a href="#" onClick="showProfileGalleries()"><img src="./images/mobile/profile_photos.png" /></a>
-			<div class="hidden" id="profile_galleries">
+			<img src="./images/mobile/profile_photos.png" />
+			<div id="profile_galleries">
 				<p><a href="#" onClick="showTakePhotoPage()"><img src="./images/mobile/AddAPicture.png" /></a></p>
 				<ul id="profile_galleries_ul"></ul>
 			</div>
-			<a href="#" onClick="showProfileScore()"><img src="./images/mobile/profile_score.png" /></a>
-			<div class="hidden" id="profile_score">
+			<img src="./images/mobile/profile_score.png" />
+			<div id="profile_score">
 				<p>Beer Score: <span id="beer_score"></span></p>
 				<p>Drink Score: <span id="drink_score"></span></p>
 				<p>Total Score: <span id="total_score"></span></p>
 			</div>
-			<a href="#" onClick="showProfileBeers()"><img src="./images/mobile/profile_beers.png" /></a>
-			<div class="hidden" id="profile_beers">
+			<img src="./images/mobile/profile_beers.png" />
+			<div id="profile_beers">
 				<p>Top 5 Beers:</p>
 				<ul id="mobile_profile_beers_ul"></ul>
 			</div>
-			<a href="#" onClick="showProfileDrinks()"><img src="./images/mobile/profile_drinks.png" /></a>
-			<div class="hidden" id="profile_drinks">
+			<img src="./images/mobile/profile_drinks.png" />
+			<div id="profile_drinks">
 				<p>Top 3 Drinks:</p>
 				<div id="add_favorite_drink_button"></div>
 				<ul id="mobile_profile_drinks_ul"></ul>
@@ -183,24 +183,24 @@
 			<div id="profile_member1_info_holder">
 				<div id="profile_member1_info"></div>
 			</div>
-			<a href="#" onClick="showProfileGalleries()"><img src="./images/mobile/profile_photos.png" /></a>
-			<div class="hidden" id="profile_member1_galleries">
+			<img src="./images/mobile/profile_photos.png" />
+			<div id="profile_member1_galleries">
 				<p><a href="#" onClick="showTakePhotoPage()"><img src="./images/mobile/AddAPicture.png" /></a></p>
 				<ul id="profile_member1_galleries_ul"></ul>
 			</div>
-			<a href="#" onClick="showProfileScore()"><img src="./images/mobile/profile_score.png" /></a>
-			<div class="hidden" id="profile_member1_score">
+			<img src="./images/mobile/profile_score.png" />
+			<div id="profile_member1_score">
 				<p>Beer Score: <span id="profile_member1_beer_score"></span></p>
 				<p>Drink Score: <span id="profile_member1_drink_score"></span></p>
 				<p>Total Score: <span id="profile_member1_total_score"></span></p>
 			</div>
-			<a href="#" onClick="showProfileBeers()"><img src="./images/mobile/profile_beers.png" /></a>
-			<div class="hidden" id="profile_member1_beers">
+			<img src="./images/mobile/profile_beers.png" />
+			<div id="profile_member1_beers">
 				<p>Top 5 Beers:</p>
 				<ul id="mobile_profile_beers_ul"></ul>
 			</div>
-			<a href="#" onClick="showProfileDrinks()"><img src="./images/mobile/profile_drinks.png" /></a>
-			<div class="hidden" id="profile_drinks">
+			<img src="./images/mobile/profile_drinks.png" />
+			<div id="profile_drinks">
 				<p>Top 3 Drinks:</p>
 				<div id="add_favorite_drink_button"></div>
 				<ul id="mobile_profile_drinks_ul"></ul>
@@ -2665,6 +2665,8 @@
 					$('#drink_score').append(parsed_data['drinkscore']);
 					$('#total_score').append(parsed_data['memberscore']);
 					fillInProfile(parsed_data['favbeers'], parsed_data['favdrinks']);
+					// get photos for profile page
+					showProfileGalleries();
 					$('.hidden:visible').slideUp('slow');
 					$('#profile_page').slideDown('slow', function() {
 						setTimeout(function() {
@@ -2888,57 +2890,15 @@
 	
 	// display/hide the photos section on the profile page
 	function showProfileGalleries() {
-		if ($('#profile_galleries').is(':visible')) {
-			$('#profile_galleries').slideToggle('slow', function() {
-				setTimeout(function() {
-					myScroll.refresh();
-				}, 0);
+		// clear the galleries
+		$('#profile_galleries_ul').html('');
+		// fill in the galleries ul
+		$.get("http://nationwidebarcrawl.com/mobilenative/photos/", function(response) {
+			var parsed_data = $.parseJSON(response);
+			$.each(parsed_data, function() {
+				var chosengallery = this['gallerypk'];
+				$('#profile_galleries_ul').append('<li class="mobile_left"><a href="#" rel="external" onClick="galleryClicked(\'' + chosengallery + '\')"><img src="http://nationwidebarcrawl.com' + this['73x71'] + '" /></a><p>' + this['name'] + '</p></li>');
 			});
-		} else {
-			showSpinner();
-			// clear the galleries
-			$('#profile_galleries_ul').html('');
-			// fill in the galleries ul
-			$.get("http://nationwidebarcrawl.com/mobilenative/photos/", function(response) {
-				var parsed_data = $.parseJSON(response);
-				$.each(parsed_data, function() {
-					var chosengallery = this['gallerypk'];
-					$('#profile_galleries_ul').append('<li class="mobile_left"><a href="#" rel="external" onClick="galleryClicked(\'' + chosengallery + '\')"><img src="http://nationwidebarcrawl.com' + this['73x71'] + '" /></a><p>' + this['name'] + '</p></li>');
-				});
-				$('#profile_galleries').slideToggle('slow', function() {
-					setTimeout(function() {
-						myScroll.refresh();
-						hideSpinner();
-					}, 0);
-				});
-			});
-		}
-	}
-	
-	// display/hide the beers section on the profile page
-	function showProfileBeers() {
-		$('#profile_beers').slideToggle('slow', function() {
-			setTimeout(function() {
-				myScroll.refresh();
-			}, 0);
-		});
-	}
-	
-	// display/hide the drinks section on the profile page
-	function showProfileDrinks() {
-		$('#profile_drinks').slideToggle('slow', function() {
-			setTimeout(function() {
-				myScroll.refresh();
-			}, 0);
-		});
-	}
-	
-	// display/hide the score section on the profile page
-	function showProfileScore() {
-		$('#profile_score').slideToggle('slow', function() {
-			setTimeout(function() {
-				myScroll.refresh();
-			}, 0);
 		});
 	}
 	
