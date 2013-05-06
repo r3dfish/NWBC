@@ -1311,10 +1311,10 @@
 							$('#crawl_members_ul_y').append('<li><a href="#" onClick="profileUserClicked(' + this['memberpk'] + ')"><img src="http://nationwidebarcrawl.com/mobilenative/profile/avatar/' + this['member'] + '/" /></a></li>');
 						}
 						if(this['status'] == "u") {
-							$('#crawl_members_ul_u').append('<li><img src="http://nationwidebarcrawl.com/mobilenative/profile/avatar/' + this['member'] + '/" /></li>');
+							$('#crawl_members_ul_u').append('<li><a href="#" onClick="profileUserClicked(' + this['memberpk'] + ')"><img src="http://nationwidebarcrawl.com/mobilenative/profile/avatar/' + this['member'] + '/" /></a></li>');
 						}
 						if(this['status'] == "n") {
-							$('#crawl_members_ul_n').append('<li><img src="http://nationwidebarcrawl.com/mobilenative/profile/avatar/' + this['member'] + '/" /></li>');
+							$('#crawl_members_ul_n').append('<li><a href="#" onClick="profileUserClicked(' + this['memberpk'] + ')"><img src="http://nationwidebarcrawl.com/mobilenative/profile/avatar/' + this['member'] + '/" /></a></li>');
 						}
 					});
 			
@@ -2584,7 +2584,7 @@
 				$.get("http://nationwidebarcrawl.com/mobilenative/buddies/", function(response) {
    		         	var parsed_data = $.parseJSON(response);
    	    	        $.each(parsed_data, function() {
-           		    	$('#drinking_buddies_ul').append('<li><a href="#" onClick="profileBuddyClicked(' + this['friendpk'] + ')"><img src="http://nationwidebarcrawl.com/mobilenative/profile/avatar/' + this['friend'] + '/" /><p>' + this['friend'] + '</p></a></li>');
+           		    	$('#drinking_buddies_ul').append('<li><a href="#" onClick="profileUserClicked(' + this['friendpk'] + ')"><img src="http://nationwidebarcrawl.com/mobilenative/profile/avatar/' + this['friend'] + '/" /><p>' + this['friend'] + '</p></a></li>');
                 	});
 					$('#drinking_buddies_page').slideDown('slow', function() {
 						setTimeout(function() {
@@ -2718,12 +2718,17 @@
 					$('#profile_member1_buddy_button').html('<a href="#" onClick="">Accept Friend Request Button Here</a>');
 				}
 				$('#profile_member1_score_main').append('Member Score: <br />' + parsed_data['memberscore']);
+				// set link to display favorite drink or pick favorite drink if not already set
+				var favdrinklink = '<a>';
+				if (parsed_data['favdrinkpk'] != null) {
+					var favdrinklink = '';
+				}
 				$('#profile_member1_info').append('<p>Destination: <a href="#" onClick="showBarDestList(\'' + parsed_data['favdest'] + '\')">' + parsed_data['favdest'] + '</a></p>');
 				if (parsed_data['favbeerpk'] != null) {
 					$('#profile_member1_info').append('<p>Favorite Beer: <a href="#" onClick="singleBeerClicked(\'' + parsed_data['favbeerpk'] + '\')">' + parsed_data['favbeer'] + '</a></p>');
 				}
 				if (parsed_data['favdrinkpk'] != null) {
-					$('#profile_member1_info').append('<p>Favorite Drink: <a href="./drink.html" onClick="drinkClicked(\'' + parsed_data['favdrinkpk'] + '\')">' + parsed_data['favdrink'] + '</a></p>');
+					$('#profile_member1_info').append('<p>Favorite Drink: <a href="#" onClick="singleDrinkClicked(\'' + parsed_data['favdrinkpk'] + '\')">' + parsed_data['favdrink'] + '</a></p>');
 				}
 				$('#profile_member1_info').append('<p>Favorite Bar: <a href="#" onClick="singleBarClicked(\'' + parsed_data['favbarpk'] + '\')">' + parsed_data['favbar'] + '</a></p>');
 				$('#profile_member1_image_holder').append('<img id="profile_user_avatar" src="http://nationwidebarcrawl.com' + parsed_data['image'] + '" />');
@@ -3950,7 +3955,7 @@
 			if(parsed_data['members'].length > 0) {
 				$('#drinks_single_members_holder').append('<div class="mobile_hr"></div><h1>Favorite Drink For:</h1>');
 				$.each(parsed_data['members'], function() {
-					$('#drinks_single_members').append('<li><img src="http://nationwidebarcrawl.com' + this['profileimage'] + '" /></li>');
+					$('#drinks_single_members').append('<li><a href="#" onClick="profileUserClicked(' + this['userpk'] + ')"><img src="http://nationwidebarcrawl.com' + this['profileimage'] + '" /></a></li>');
 				});
 			}
 			$('#drinks_single_drink_page').slideDown('slow', function() {
@@ -4464,7 +4469,7 @@
 				$('#single_beer_favorite_members_holder').append('<div class="mobile_hr"></div><h1>Favorite Beer For:</h1>');
 			}
 			$.each(parsed_data['members'], function() {
-				$('#single_beer_members').append('<li><img src="http://nationwidebarcrawl.com' + this['profileimage'] + '" /></li>');
+				$('#single_beer_members').append('<li><a href="#" onClick="profileUserClicked(' + this['userpk'] + ')"><img src="http://nationwidebarcrawl.com' + this['profileimage'] + '" /></a></li>');
 			});
 			$('#beers_single_beer_page').slideDown('slow', function() {
 				setTimeout(function() {
@@ -4651,7 +4656,7 @@
 				$('#bar_members_holder').append('<div class="mobile_hr"></div><h1>Favorite Bar for:</h1>');
 			}
 			$.each(parsed_data['members'], function() {
-				$('#bar_members').append('<li><img src="http://nationwidebarcrawl.com' + this['profileimage'] + '" /></li>');
+				$('#bar_members').append('<li><a href="#" onClick="profileUserClicked(' + this['userpk'] + ')"><img src="http://nationwidebarcrawl.com' + this['profileimage'] + '" /></a></li>');
 			});
 			$('#single_bar_page').slideDown('slow', function() {
 				setTimeout(function() {
